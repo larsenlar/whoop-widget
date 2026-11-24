@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>WHOOP Authorization</title>
+  <style>
+    body {
+      background: #171a20;
+      color: white;
+      font-family: -apple-system, sans-serif;
+      padding: 30px 20px;
+      line-height: 1.6;
+    }
+    .card {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #252a32;
+      padding: 24px;
+      border-radius: 16px;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 8px 0 16px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: #171a20;
+      color: white;
+      font-size: 13px;
+    }
+    button {
+      background: #b6f36b;
+      color: #171a20;
+      border: 0;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .hint { color: #aeb4be; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>WHOOP Authorization</h2>
+    <p id="status">Checking authorization response...</p>
+
+    <div id="result" hidden>
+      <p>Copy the authorization code below into Scriptable.</p>
+      <label>Authorization code</label>
+      <input id="code" readonly>
+      <button onclick="copyValue('code')">Copy code</button>
+
+      <p>Also copy your state value.</p>
+      <label>State</label>
+      <input id="state" readonly>
+      <button onclick="copyValue('state')">Copy state</button>
+
+      <p class="hint">
+        Return to Scriptable and paste both values when prompted.
+        Do not share either value with anyone.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+    const state = params.get("state");
+    const error = params.get("error");
+
+    if (error) {
+      document.getElementById("status").textContent =
+        "WHOOP authorization failed: " + error;
+    } else if (code && state) {
+      document.getElementById("status").textContent =
+        "Authorization successful. Copy the values below.";
+      document.getElementById("code").value = code;
+      document.getElementById("state").value = state;
+      document.getElementById("result").hidden = false;
+    } else {
+      document.getElementById("status").textContent =
+        "Waiting for WHOOP authorization. Open this page after approving access.";
+    }
+
+    function copyValue(id) {
+      const el = document.getElementById(id);
+      el.select();
+      el.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+    }
+  </script>
+</body>
+</html>
